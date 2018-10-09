@@ -1,0 +1,19 @@
+{
+  "name": "resume-organizer-api",
+  "version": "1.0.0",
+  "description": "A REST API for a Resume Organizer Web App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PGalicia/ResumeOrganizerAPI.git"
+  },
+  "author": "Patrick Galicia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PGalicia/ResumeOrganizerAPI/issues"
+  },
+  "homepage": "https://github.com/PGalicia/ResumeOrganizerAPI#readme"
+}
