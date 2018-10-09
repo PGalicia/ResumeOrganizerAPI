@@ -4,7 +4,8 @@
   "description": "A REST API for a Resume Organizer Web App",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/PGalicia/ResumeOrganizerAPI/issues"
   },
-  "homepage": "https://github.com/PGalicia/ResumeOrganizerAPI#readme"
+  "homepage": "https://github.com/PGalicia/ResumeOrganizerAPI#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "nodemon": "^1.18.4"
+  }
 }
