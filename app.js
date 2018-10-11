@@ -8,6 +8,7 @@ const resumeRoutes = require('./api/routes/resumes');
 const userRoutes = require('./api/routes/user');
 
 mongoose.connect(`mongodb+srv://pgalicia:${process.env.MONGO_ATLAS_PW}@resume-organizer-w2ibw.mongodb.net/test?retryWrites=true`, { useNewUrlParser: true });
+mongoose.set('useCreateIndex', true);
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false})) // might not be needed
