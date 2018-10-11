@@ -28,6 +28,21 @@ router.get('/', (req, res, next) => {
         });
 });
 
+router.get('/:resumeID', (req, res, next) => {
+    const _id = req.params.resumeID;
+    Resume.findById(_id)
+        .select("name major _id")
+        .exec()
+        .then(resume => {
+            console.log("resume", resume);
+            res.status(200).json(resume);
+        })
+        .catch(err => {
+            console.log("error", err);
+            res.status(500).json(err)
+        })
+})
+
 router.post('/', (req, res, next) => {
     const resume = new Resume({
         _id: new mongoose.Types.ObjectId(),
