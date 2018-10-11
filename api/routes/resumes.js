@@ -40,8 +40,8 @@ router.get('/:resumeID', (req, res, next) => {
         .catch(err => {
             console.log("error", err);
             res.status(500).json(err)
-        })
-})
+        });
+});
 
 router.post('/', (req, res, next) => {
     const resume = new Resume({
@@ -64,8 +64,26 @@ router.post('/', (req, res, next) => {
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
-        })
+        });
 });
+
+router.patch('/:resumeID', (req, res, next) => {
+    const _id = req.params.resumeID;
+    const updateCategory = {};
+    for(const category of req.body) {
+        updateCategory[category.propName] = category.value
+    }
+    Resume.update({_id}, { $set: updateCategory })
+        .exec()
+        .then(resume => {
+            console.log(resume);
+            res.status(200).json({message: "Product Updated!"})
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json(err);
+        });
+})
 
 router.delete('/:resumeID', (req, res, next) => {
     const _id = req.params.resumeID;
@@ -73,14 +91,12 @@ router.delete('/:resumeID', (req, res, next) => {
         .exec()
         .then(resume => {
             console.log(resume);
-            res.status(200).json({
-                message: "Resume Deleted"
-            })
+            res.status(200).json({message: "Resume Deleted"})
         })
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
-        })
+        });
 });
 
 
