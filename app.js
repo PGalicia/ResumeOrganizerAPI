@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 // Available API Routes
 app.use('/resumes', resumeRoutes);
-// app.use('/user', userRoutes);
+app.use('/user', userRoutes);
 
 // Case for when Routes called are invalid/not found
 app.use((req, res, next) => {
