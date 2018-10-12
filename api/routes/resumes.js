@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const checkAuth = require('../middleware/checkAuth');
 
 const Resume = require('../models/resume');
 
 // Get all
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth, (req, res, next) => {
     Resume.find()
         .exec()
         .then(resumes => {
@@ -28,7 +29,7 @@ router.get('/', (req, res, next) => {
         });
 });
 
-router.get('/:resumeID', (req, res, next) => {
+router.get('/:resumeID', checkAuth, (req, res, next) => {
     const _id = req.params.resumeID;
     Resume.findById(_id)
         .select("name major _id")
