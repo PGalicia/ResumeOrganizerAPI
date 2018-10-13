@@ -9,16 +9,19 @@ const User = require('../models/user');
 
 // Future plan: ensure that user can edit their password and username
 
+// Get all account information -- the user ADMIN is the only user to access this route.
 router.get('/', checkAuth.admin, (req, res, next) => {
     User.find()
         .exec()
         .then(users => {
+            console.log(users);
             const response = {
                 count: users.count,
                 userList: users.map(user => {
                     return {
                         username: user.username,
                         password: user.password,
+                        resume: user.resume,
                         _id: user._id
                     }
                 })
@@ -32,6 +35,7 @@ router.get('/', checkAuth.admin, (req, res, next) => {
         });
 });
 
+// Create a new username and password
 router.post('/signup', (req, res, next) => {
     User.find({username: req.body.username})
         .exec()
@@ -63,6 +67,7 @@ router.post('/signup', (req, res, next) => {
         });
 });
 
+// Login using an existing username and password
 router.post('/login', (req, res, next) => {
     User.findOne({ username: req.body.username })
         .exec()
@@ -89,13 +94,14 @@ router.post('/login', (req, res, next) => {
                 }
                 return res.status(401).json({ message: "Auth failed!"})
             })
-        })
+        }) // Task: When the login is succesful find the resume connected to the user's username
         .catch(err => {
             console.log(err);
             res.status(500).json({error: err})
         });
 });
 
+// Delete an account -- the user ADMIN is the only user to access this route.
 router.delete('/:userID', checkAuth.admin, (req, res, next) => {
     const _id = req.params.userID;
     User.deleteOne({_id})
