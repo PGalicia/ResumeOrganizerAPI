@@ -3,12 +3,13 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const checkAuth = require('../middleware/checkAuth');
 
 const User = require('../models/user');
 
 // Future plan: ensure that user can edit their password and username
 
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth.admin, (req, res, next) => {
     User.find()
         .exec()
         .then(users => {
@@ -70,7 +71,17 @@ router.post('/login', (req, res, next) => {
             bcrypt.compare(req.body.password, user.password, (err, result) => {
                 if(err) return res.status(401).json({ message: "Auth failed!"});
                 if(result) {
-                    const token = jwt.sign({ username: user.username }, process.env.JWT_KEY, { expiresIn: "1h"});
+                    let secretKey = null;
+                    // Create a util function for this
+                    if(user.username === "admin") {
+                        secretKey = process.env.JWT_KEY_ADMIN;
+                    } else if(user.username === "company"){
+                        secretKey = process.env.JWT_KEY_COMPANY;
+                    } else {
+                        secretKey = process.env.JWT_KEY_USER;
+                    }
+
+                    const token = jwt.sign({ username: user.username }, secretKey, { expiresIn: "1h"});
                     return res.status(200).json({
                         message: "Auth sucessful!",
                         token: token
@@ -85,7 +96,7 @@ router.post('/login', (req, res, next) => {
         });
 });
 
-router.delete('/:userID', (req, res, next) => {
+router.delete('/:userID', checkAuth.admin, (req, res, next) => {
     const _id = req.params.userID;
     User.deleteOne({_id})
         .exec()

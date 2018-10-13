@@ -6,7 +6,7 @@ const checkAuth = require('../middleware/checkAuth');
 const Resume = require('../models/resume');
 
 // Get all
-router.get('/', checkAuth, (req, res, next) => {
+router.get('/', checkAuth.company, (req, res, next) => {
     Resume.find()
         .exec()
         .then(resumes => {
@@ -29,7 +29,7 @@ router.get('/', checkAuth, (req, res, next) => {
         });
 });
 
-router.get('/:resumeID', checkAuth, (req, res, next) => {
+router.get('/:resumeID', checkAuth.user, (req, res, next) => {
     const _id = req.params.resumeID;
     Resume.findById(_id)
         .select("name major _id")
@@ -44,7 +44,7 @@ router.get('/:resumeID', checkAuth, (req, res, next) => {
         });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAuth.user, (req, res, next) => {
     const resume = new Resume({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -68,7 +68,7 @@ router.post('/', (req, res, next) => {
         });
 });
 
-router.patch('/:resumeID', (req, res, next) => {
+router.patch('/:resumeID', checkAuth.user, (req, res, next) => {
     const _id = req.params.resumeID;
     const updateCategory = {};
     for(const category of req.body) {
@@ -86,7 +86,7 @@ router.patch('/:resumeID', (req, res, next) => {
         });
 })
 
-router.delete('/:resumeID', (req, res, next) => {
+router.delete('/:resumeID', checkAuth.admin, (req, res, next) => {
     const _id = req.params.resumeID;
     Resume.deleteOne({_id})
         .exec()
