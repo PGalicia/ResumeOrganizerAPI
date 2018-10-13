@@ -48,16 +48,15 @@ router.get('/:resumeID', checkAuth.user, (req, res, next) => {
 
 // Create a new resume -- the user USER is the only user to access this route.
 router.post('/', checkAuth.user, (req, res, next) => {
+    // Holds the specified user
     let selectedUser = null;
     // Task: Only allow a user to create a resume if they don't already have any
-    // Task: find user and check if the inputted user exist
+    // Find the specified user
     User.findOne({ username: req.body.username })
         .exec()
         .then(user => {
-            // If user exists, check if the username already has a resume made
             // if user does not exists, throw an error
             if(!user) throw "Username provided does not exist";
-            // Find the user here
             // If the user already has a resume throw error
             if(user.resume) throw "There is already a resume associated with the given username";
             // If user does not have a resume, make one
@@ -76,6 +75,7 @@ router.post('/', checkAuth.user, (req, res, next) => {
         })
         .then(result => {
             console.log(result);
+            // Update the User's resume ID
             User.updateOne({ _id: selectedUser._id }, { $set: { resume: result._id }}).exec();
             res.status(201).json({
                 message: "Resume succesfully added!",
@@ -116,16 +116,32 @@ router.patch('/:resumeID', checkAuth.user, (req, res, next) => {
 
 // Delete a resume -- the user ADMIN is the only user to access this route.
 router.delete('/:resumeID', checkAuth.admin, (req, res, next) => {
-    const _id = req.params.resumeID;
-    Resume.deleteOne({_id})
+    // Holds the specified user
+    let selectedUser = null;
+    // Task: also reset the resume property of the user
+    User.findOne({ username: req.body.username })
         .exec()
+        .then(user => {
+            // if user does not exists, throw an error
+            if(!user) throw "Username provided does not exist";
+            // If the user does not have a resume under their name throw error
+            if(!user.resume) throw "This user does not have a resume under the specified ID";
+            // If user does not have a resume, make one
+            return user;
+        })
+        .then(user => {
+            const _id = req.params.resumeID;
+            selectedUser = user;
+            return Resume.deleteOne({_id}).exec();
+        })
         .then(resume => {
             console.log(resume);
+            User.updateOne({ _id: selectedUser._id }, { $set: { resume: null }}).exec();
             res.status(200).json({message: "Resume Deleted"})
         })
         .catch(err => {
             console.log(err);
-            res.status(500).json(err);
+            res.status(500).json({error: err});
         });
 });
 
